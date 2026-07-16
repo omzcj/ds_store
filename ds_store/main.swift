@@ -26,7 +26,7 @@ if action == "monit" {
     let stream = FSEventStreamCreate(kCFAllocatorDefault, { (streamRef:ConstFSEventStreamRef, clientCallBackInfo:UnsafeMutableRawPointer?, numEvents:Int, eventPaths:UnsafeMutableRawPointer, eventFlags:UnsafePointer<FSEventStreamEventFlags>, eventIds:UnsafePointer<FSEventStreamEventId>) in
         
         let paths = Array(UnsafeBufferPointer(start: eventPaths.bindMemory(to: UnsafePointer<CChar>.self, capacity: numEvents), count: numEvents))
-        for i in 0 ... numEvents - 1 {
+        for i in 0 ..< numEvents {
             let path = String(cString: paths[i])
             if path.hasSuffix(".DS_Store") {
                 _remove(path: path)
@@ -47,9 +47,10 @@ if action == "monit" {
 //            count += 1
         }
     }, nil, ["/"] as CFArray, FSEventStreamEventId(kFSEventStreamEventIdSinceNow), 1.0, FSEventStreamCreateFlags(kFSEventStreamCreateFlagFileEvents))!
-    FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode.rawValue)
+    let queue = DispatchQueue(label: "com.omzcj.ds-store.events")
+    FSEventStreamSetDispatchQueue(stream, queue)
     FSEventStreamStart(stream)
-    CFRunLoopRun()
+    dispatchMain()
 } else if action == "list" {
     let rootPath = "/"
     let enumerator = FileManager.default.enumerator(atPath: rootPath)
