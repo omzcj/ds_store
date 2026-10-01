@@ -1,5 +1,12 @@
 # ds_store
 
+> [!IMPORTANT]
+> This project is retired. Its `.DS_Store` cleanup and monitoring functionality
+> is maintained in
+> [miniTools](https://github.com/oh-my-brew/miniTools). Existing releases remain
+> available for historical and recovery purposes, but no further releases are
+> planned.
+
 ## Release
 
 Update `VERSION` and push the change to `main`. The release workflow validates
